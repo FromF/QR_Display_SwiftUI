@@ -10,6 +10,8 @@ import UIKit
 
 class QRCodeMaker: NSObject {
     private let correctionTexts = ["L" , "M" , "Q" , "H" ]
+    // CIContext()は毎回生成すると遅いとの指摘があったのでこちらで一度生成したら使い回すようにする
+    private let context = CIContext()
 
     func make(message:String , level:Int) -> UIImage? {
         guard let data = message.data(using: .utf8) else { return nil }
@@ -20,7 +22,7 @@ class QRCodeMaker: NSObject {
         
         guard let ciImage = qr.outputImage?.transformed(by: sizeTransform) else { return nil }
         
-        guard let cgImage = CIContext().createCGImage(ciImage, from: ciImage.extent) else { return nil }
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
         
         let image = UIImage(cgImage: cgImage)
         
